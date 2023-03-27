@@ -4,12 +4,11 @@
 int main(int argc, char const *argv[])
 {
     //Window Dimensions
-    double windowDimensions[2];
-    windowDimensions[0] = 384;
-    windowDimensions[1] = 384;
+    const int windowWidth{384};
+    const int windowHeight{384};
 
     //Initializing Window
-    InitWindow(windowDimensions[0], windowDimensions[1], "Classy Clash");
+    InitWindow(windowWidth, windowHeight, "Classy Clash");
 
     //Map variable
     Texture2D map = LoadTexture("nature_tileset/OpenWorldMap24x24.png");
@@ -17,6 +16,12 @@ int main(int argc, char const *argv[])
 
     //speed variable
     float speed{4.0};
+
+    Texture2D knight = LoadTexture("characters/knight_idle_spritesheet.png");
+    Vector2 knightPos{
+        windowWidth/2.0f - 4.0f * (0.5f * (float)knight.width/6.0f),
+        windowHeight/2.0f - 4.0f * (0.5f * (float)knight.height)
+    };
 
     SetTargetFPS(60);
 
@@ -38,8 +43,13 @@ int main(int argc, char const *argv[])
             mapPos = Vector2Subtract(mapPos, Vector2Scale(Vector2Normalize(direction), speed));
         }
 
-        
+        // draw the map
         DrawTextureEx(map, mapPos, 0.0, 4.0, WHITE);
+
+        // draw the character
+        Rectangle source{0.f, 0.f, (float)knight.width/6.f, (float)knight.height};
+        Rectangle dest{knightPos.x, knightPos.y, 4.0f * (float)knight.width/6.0f, 4.0f * (float)knight.height};
+        DrawTexturePro (knight, source, dest, Vector2{}, 0.f, WHITE); 
 
         EndDrawing();
     }
