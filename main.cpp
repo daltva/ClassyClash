@@ -2,6 +2,7 @@
 #include "raymath.h"
 #include "Character.h"
 #include "Prop.h"
+#include "Enemy.h"
 
 int main(int argc, char const *argv[])
 {
@@ -22,6 +23,12 @@ int main(int argc, char const *argv[])
     Prop props[2]{
         Prop{Vector2{600.f, 300.f}, LoadTexture("nature_tileset/Rock.png")},
         Prop{Vector2{400.f, 500.f}, LoadTexture("nature_tileset/log.png")}
+    };
+
+    Enemy goblin{
+        Vector2{},
+        LoadTexture("characters/goblin_idle_spritesheet.png"),
+        LoadTexture("characters/goblin_run_spritesheet.png")
     };
 
     SetTargetFPS(60);
@@ -59,6 +66,8 @@ int main(int argc, char const *argv[])
                 knight.undoMovement();
            }
         }
+
+        goblin.tick(GetFrameTime());
 
         EndDrawing();
     }
