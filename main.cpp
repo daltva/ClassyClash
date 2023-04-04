@@ -30,6 +30,7 @@ int main(int argc, char const *argv[])
         LoadTexture("characters/goblin_idle_spritesheet.png"),
         LoadTexture("characters/goblin_run_spritesheet.png")
     };
+    goblin.setTarget(&knight);
 
     SetTargetFPS(60);
 
