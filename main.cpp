@@ -23,15 +23,26 @@ int main(int argc, char const *argv[])
 
     Prop props[2]{
         Prop{Vector2{600.f, 300.f}, LoadTexture("nature_tileset/Rock.png")},
-        Prop{Vector2{400.f, 500.f}, LoadTexture("nature_tileset/log.png")}
-    };
+        Prop{Vector2{400.f, 500.f}, LoadTexture("nature_tileset/log.png")}};
 
     Enemy goblin{
-        Vector2{},
+        Vector2{800.f, 300.f},
         LoadTexture("characters/goblin_idle_spritesheet.png"),
-        LoadTexture("characters/goblin_run_spritesheet.png")
-    };
-    goblin.setTarget(&knight);
+        LoadTexture("characters/goblin_run_spritesheet.png")};
+
+    Enemy slime{
+        Vector2{500.f, 700.f},
+        LoadTexture("characters/slime_idle_spritesheet.png"),
+        LoadTexture("characters/slime_run_spritesheet.png")};
+
+    Enemy *enemies[]{
+        &goblin,
+        &slime};
+
+    for (auto enemy : enemies)
+    {
+        enemy->setTarget(&knight);
+    }
 
     SetTargetFPS(60);
 
@@ -46,8 +57,8 @@ int main(int argc, char const *argv[])
         // draw the map
         DrawTextureEx(map, mapPos, 0.0, mapScale, WHITE);
 
-        //draw the props
-        for(auto prop : props)
+        // draw the props
+        for (auto prop : props)
         {
             prop.Render(knight.getWorldPos());
         }
@@ -58,7 +69,7 @@ int main(int argc, char const *argv[])
             EndDrawing();
             continue;
         }
-        else //Character is alive
+        else // Character is alive
         {
             std::string knightsHealth = "Health: ";
             knightsHealth.append(std::to_string(knight.getHealth()), 0, 5);
@@ -66,30 +77,36 @@ int main(int argc, char const *argv[])
         }
 
         knight.tick(GetFrameTime());
-        //check map bounds
-        if(knight.getWorldPos().x < 0.f ||
+        // check map bounds
+        if (knight.getWorldPos().x < 0.f ||
             knight.getWorldPos().y < 0.f ||
             knight.getWorldPos().x + windowWidth > map.width * mapScale ||
             knight.getWorldPos().y + windowHeight > map.height * mapScale)
         {
             knight.undoMovement();
         }
-        //check prop collisions
+        // check prop collisions
         for (auto prop : props)
         {
-           if (CheckCollisionRecs(prop.GetCollisionRec(knight.getWorldPos()), knight.getCollisionRec()))
-           {
+            if (CheckCollisionRecs(prop.GetCollisionRec(knight.getWorldPos()), knight.getCollisionRec()))
+            {
                 knight.undoMovement();
-           }
+            }
         }
 
-        goblin.tick(GetFrameTime());
+        for (auto enemy : enemies)
+        {
+            enemy->tick(GetFrameTime());
+        }
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {
-            if (CheckCollisionRecs(goblin.getCollisionRec(), knight.getWeaponCollisionRec()))
+            for (auto enemy : enemies)
             {
-                goblin.setAlive(false);
+                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()))
+                {
+                    enemy->setAlive(false);
+                } 
             }
         }
 
@@ -97,3 +114,4 @@ int main(int argc, char const *argv[])
     }
     CloseWindow();
 }
+
